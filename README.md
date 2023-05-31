@@ -6,64 +6,145 @@ To write a program to predict the profit of a city using the linear regression m
 ## Equipments Required:
 1. Hardware – PCs
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
-```
+
+
 ## Algorithm
-1. Get the independent variable X and dependent variable Y.
-2.Calculate the mean of the X -values and the mean of the Y -values.
-3.Find the slope m of the line of best fit using the formula.
-4. Compute the y -intercept of the line by using the formula
-5. Use the slope m and the y -intercept to form the equation of the line. 
-6. Obtain the straight line equation Y=mX+b and plot the scatterplot.
-```
+1.Import pandas, numpy and mathplotlib.pyplot
+
+
+2.Trace the best fit line and calculate the cost function
+
+
+3.Calculate the gradient descent and plot the graph for it
+
+
+4.Predict the profit for two population sizes.
+
 ## Program:
 ```
 /*
 Program to implement the linear regression using gradient descent.
-Developed by: divakar R
-RegisterNumber:  212222240026
-*/
-```
-```
+Developed by: DIVAKAR R
+RegisterNumber: 212222240026
+
 import numpy as np
 import matplotlib.pyplot as plt
-X=np.array(eval(input("x: ")))
-Y=np.array(eval(input("y: ")))
-X_mean=np.mean(X)
-Y_mean=np.mean(Y)
-num=0
-denum=0
-for i in range(len(X)):
-  num+=(X[i]-X_mean)*(Y[i]-Y_mean)
-  denum+=(X[i]-X_mean)**2
+import pandas as pd
 
-#calculate slope
-m=num/denum
-print("Slope")
-print(m)
-#calculate intercept
-b=Y_mean - m*X_mean
-print("Y-intercept")
-print(b)
-# line equation
-Y_pred=m*X+b
-# condtion if x=number 
-Y_expect=m*3+b
-print(Y_pred)
-print(Y_expect)
+data=pd.read_csv("/ex1.txt",header=None)
 
-# to plot graph
-plt.scatter(X,Y,color='blue')
-plt.plot(X,Y_pred,color='red') 
-plt.show() 
+plt.scatter(data[0],data[1])
+plt.xticks(np.arange(5,30,step=5))
+plt.yticks(np.arange(-5,30,step=5))
+plt.xlabel("Population of City(10,000s)")
+plt.ylabel("Profit ($10,000)")
+plt.title("Profit Prediction")
+
+def computeCost(X,y,theta):
+  """
+  Take in a numpy array X, y , theta and generate the cost fuction in a linear regression model
+  """
+  m=len(y)
+  h=X.dot(theta)  # length of training data
+  square_err=(h-y)**2 
+
+  return 1/(2*m) * np.sum(square_err)  
+  
+  data_n=data.values
+m=data_n[:,0].size
+X=np.append(np.ones((m,1)),data_n[:,0].reshape(m,1),axis=1)
+y=data_n[:,1].reshape(m,1)
+theta=np.zeros((2,1))
+
+computeCost(X,y,theta)   # function call
+
+def gradientDescent(X,y,theta,alpha,num_iters):
+  
+  m=len(y)
+  J_history=[]
+
+  for i in range(num_iters):
+    predictions=X.dot(theta)
+    error=np.dot(X.transpose(),(predictions - y))
+    descent=alpha * 1/m * error
+    theta-=descent
+    J_history.append(computeCost(X,y,theta))
+
+  return theta, J_history
+  
+theta,J_history = gradientDescent(X,y,theta,0.01,1500)
+print("h(x) ="+str(round(theta[0,0],2))+" + "+str(round(theta[1,0],2))+"x1")
+
+plt.plot(J_history)
+plt.xlabel("Iternations")
+plt.ylabel("$J(\Theta)$")
+plt.title("Cost function using Gradient Descent")
+
+plt.scatter(data[0],data[1])
+x_value=[x for x in range(25)]
+y_value=[y*theta[1]+theta[0] for y in x_value]
+plt.plot(x_value,y_value,color="r")
+plt.xticks(np.arange(5,30,step=5))
+plt.yticks(np.arange(-5,30,step=5))
+plt.xlabel("Polpulation of City (10,000s)")
+plt.ylabel("Profit (10,000s)")
+plt.title("Profit Prediction")
+
+def predict(x,theta):
+  predictions= np.dot(theta.transpose(),x)
+  return predictions[0]
+  
+ predict1=predict(np.array([1,3.5]),theta)*10000
+print("For population = 35,000, we predict a profit of $"+str(round(predict1,0)))
+
+predict2=predict(np.array([1,7]),theta)*10000
+print("For population = 70,000, we predict a profit of $"+str(round(predict2,0)))
+*/
 ```
 
 ## Output:
-Text(0.5, 1.0, 'Profit Prediction')
-![image](https://user-images.githubusercontent.com/121932143/230440368-4654142d-1358-4c93-9fb4-01c6f3750139.png)
+PROFIT PREDICTION:
+![ML-301](https://github.com/divakar618/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/121932143/aadbf8a2-87a7-4450-8da6-8352755c7dd5)
 
-Text(0.5, 1.0, 'Cost function using Gradient Descent')
 
-![image](https://user-images.githubusercontent.com/121932143/230440764-6b025f30-f75d-41f3-b85d-ef2989c95de6.png)
+
+COST FUNCTION:
+
+![ML-302](https://github.com/divakar618/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/121932143/4b5d7a4e-3331-4e8d-be8d-5dbde14a4728)
+
+
+GRADIENT DESCENT:
+
+
+
+![ML-303](https://github.com/divakar618/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/121932143/dcfd8c3e-44b9-4f49-ba4f-f3f93ddd526e)
+
+
+
+COST FUNCTION USING GRADIENT DESCENT:
+
+
+
+![ML-304](https://github.com/divakar618/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/121932143/6df17683-1004-499c-940a-230fbd934204)
+
+
+GRAPH WITH BEST FIT LINE (PROFIT PREDICTION):
+
+
+![ML-305](https://github.com/divakar618/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/121932143/c9e3b0a2-bac6-4441-9651-2a0731ced41f)
+
+
+PROFIT PREDICTION FOR A POPULATION OF 35,000:
+
+![ML-306](https://github.com/divakar618/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/121932143/60b71ec9-6a9c-4098-8f10-01ec1b96e156)
+
+
+
+PROFIT PREDICTION FOR A POPULATION OF 70,000:
+
+
+![ML-307](https://github.com/divakar618/Implementation-of-Linear-Regression-Using-Gradient-Descent/assets/121932143/de2717bb-034c-45e5-bb2e-65e2221595b2)
+
 
 
 ## Result:
